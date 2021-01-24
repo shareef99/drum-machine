@@ -2,7 +2,8 @@ import "./App.css";
 import sounds from "../src/sounds/allSounds.mp3";
 import useSound from "use-sound";
 import { useState } from "react";
-import { useEffect } from "react";
+// import { useEffect } from "react";
+import useKey from "@rooks/use-key";
 
 function App() {
     //Constants
@@ -86,20 +87,14 @@ function App() {
                 handleSoundName("closeHH");
                 break;
             default:
+                playSound({ id: "heater1" });
                 break;
         }
     };
-
-    // window.addEventListener("keydown", handleKeyDown);
-
-    //useEffect
-    useEffect(() => {
-        window.addEventListener("keydown", handleKeyDown);
-        return () => {
-            window.removeEventListener("keydown", handleKeyDown);
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    useKey(["q", "w", "e", "a", "s", "d", "z", "x", "c"], handleKeyDown, {
+        eventTypes: ["keydown"],
+        when: isPowerOn,
+    });
 
     return (
         <>

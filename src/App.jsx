@@ -1,7 +1,8 @@
 import "./App.css";
 import sounds from "../src/sounds/allSounds.mp3";
 import useSound from "use-sound";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useEffect } from "react";
 
 function App() {
     //Constants
@@ -19,11 +20,11 @@ function App() {
 
     // useState
     const [soundName, setSoundName] = useState("SoundName");
-    const [isMuted, setIsMuted] = useState(true);
+    const [isPowerOn, setIsPowerOn] = useState(true);
 
     // useSound Custom Hook
     const [playSound] = useSound(sounds, {
-        soundEnabled: isMuted,
+        soundEnabled: isPowerOn,
         interrupt: true,
         sprite: {
             heater1: [313, 513],
@@ -43,103 +44,107 @@ function App() {
         setSoundName(name);
     };
 
-    const handleMute = () => {
-        setIsMuted(!isMuted);
+    const handlePower = () => {
+        setIsPowerOn(!isPowerOn);
     };
-    const handleKeyPress = (e) => {
+    const handleKeyDown = (e) => {
         switch (e.key) {
             case "q":
                 playSound({ id: "heater1" });
-                handleSoundName("Heater1");
+                handleSoundName("heater1");
                 break;
             case "w":
                 playSound({ id: "heater2" });
-                handleSoundName("Heater2");
+                handleSoundName("heater2");
                 break;
             case "e":
                 playSound({ id: "heater3" });
-                handleSoundName("Heater3");
+                handleSoundName("heater3");
                 break;
             case "a":
                 playSound({ id: "heater4" });
-                handleSoundName("Heater4");
+                handleSoundName("heater4");
                 break;
             case "s":
                 playSound({ id: "clap" });
-                handleSoundName("Clap");
+                handleSoundName("clap");
                 break;
             case "d":
                 playSound({ id: "openHH" });
-                handleSoundName("OpenHH");
+                handleSoundName("openHH");
                 break;
             case "z":
                 playSound({ id: "kickNHat" });
-                handleSoundName("Kick N Hat");
+                handleSoundName("kickNHat");
                 break;
             case "x":
                 playSound({ id: "kick" });
-                handleSoundName("Kick");
+                handleSoundName("kick");
                 break;
             case "c":
                 playSound({ id: "closeHH" });
-                handleSoundName("CloseHH");
+                handleSoundName("closeHH");
                 break;
             default:
                 break;
         }
     };
 
+    // window.addEventListener("keydown", handleKeyDown);
+
     //useEffect
     useEffect(() => {
-        window.addEventListener("keydown", handleKeyPress);
+        window.addEventListener("keydown", handleKeyDown);
         return () => {
-            window.removeEventListener("keydown", handleKeyPress);
+            window.removeEventListener("keydown", handleKeyDown);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
         <>
-            <section className="">
-                <div id="drum-machine" className="flex">
-                    <div className="grid grid-cols-3 w-1/2">
-                        {allSounds.map((sound) => {
-                            return (
-                                <button
-                                    key={sound.id}
-                                    id={sound.id}
-                                    className="drum-pad"
-                                    onMouseDown={() =>
-                                        playSound({ id: sound.soundName })
+            <section
+                id="drum-machine"
+                className="flex flex-wrap justify-center items-center bg-gray-300 h-screen"
+            >
+                <div className="grid grid-cols-threeColOf80px grid-rows-threeRowsOf70px gap-4 bg-gray-400 p-2">
+                    {allSounds.map((sound) => {
+                        return (
+                            <button
+                                key={sound.id}
+                                id={sound.id}
+                                className="drum-pad m-2 bg-gray-600"
+                                onMouseDown={() =>
+                                    playSound({ id: sound.soundName })
+                                }
+                                onClick={() => {
+                                    if (!isPowerOn) {
+                                        handleSoundName("Power Off");
+                                    } else {
+                                        handleSoundName(sound.soundName);
                                     }
-                                    onClick={() =>
-                                        handleSoundName(sound.soundName)
-                                    }
-                                >
-                                    {sound.id}
-                                </button>
-                            );
-                        })}
-                    </div>
-                    <div className="flex flex-col justify-center">
-                        <div className="m-16 flex flex-col justify-center items-center">
-                            <p>Power {isMuted ? "On" : "Off"}</p>
-                            <button onClick={handleMute}>
-                                <div className="bg-black w-6 h-4 relative">
-                                    <div
-                                        className={`bg-blue-600 w-3 h-4 absolute ${
-                                            isMuted ? "left-0" : "right-0"
-                                        } z-10`}
-                                    ></div>
-                                </div>
+                                }}
+                            >
+                                {sound.id}
                             </button>
-                        </div>
-                        <div
-                            id="display"
-                            className="m-16 self-center w-20 text-center"
-                        >
-                            <p>{soundName}</p>
-                        </div>
+                        );
+                    })}
+                </div>
+                <div className="flex flex-col justify-center p-8">
+                    <div className="flex flex-col justify-center items-center">
+                        <p>Power {isPowerOn ? "On" : "Off"}</p>
+                        <button onClick={handlePower}>
+                            <div className="bg-black w-6 h-4 relative">
+                                <div
+                                    className={`bg-blue-600 w-3 h-4 absolute ${
+                                        isPowerOn ? "left-0" : "right-0"
+                                    } z-10`}
+                                ></div>
+                            </div>
+                        </button>
+                    </div>
+                    <div id="display" className="self-center w-20 text-center">
+                        <p>{soundName}</p>
                     </div>
                 </div>
             </section>
